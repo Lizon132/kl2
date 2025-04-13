@@ -4,6 +4,7 @@ import mysql from 'mysql2/promise';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import postsRoutes from './routes/posts.js'; // Note the `.js` is required for ESM
+import authRoutes from './routes/auth.js';
 
 dotenv.config();
 
@@ -29,3 +30,5 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
+
+app.use('/auth', authRoutes);
