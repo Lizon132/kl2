@@ -1,12 +1,83 @@
-# React + Vite
+# KL2 Frontend (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend of the KL2 project, a modern React-based interface built to replace a legacy Drupal site.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+- Vite-powered React app
+- TipTap editor for WYSIWYG post editing
+- Bootstrap 5 styling
+- Paginated post viewer (10 per page)
+- Login page using JWT auth
+- Protected editor dashboard
+- Embedded YouTube and Google Maps support via clean links
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 📁 Folder Structure
+
+```
+frontend/
+├── public/
+│   └── uploads/       # Uploaded image files (Git-ignored)
+├── src/
+│   ├── components/    # Reusable UI components like Navbar
+│   ├── pages/         # React pages (Home, Posts, Editor, Login)
+│   ├── App.jsx        # Top-level routing
+│   └── main.jsx       # Vite app entry
+└── index.html         # Vite HTML entry
+```
+
+---
+
+## 🛠️ Getting Started
+
+1. From project root:
+```bash
+cd frontend
+npm install
+```
+
+2. Start dev server:
+```bash
+npm run dev
+```
+
+3. Open in browser:
+```
+http://localhost:5173
+```
+
+---
+
+## 🔐 Auth & API
+
+- Auth and post routes are proxied to the backend (`localhost:3001`) via Vite's proxy config.
+- Auth state is stored in localStorage using a JWT.
+- The editor view is protected and only accessible after login.
+
+---
+
+## 🧾 Notes
+
+- Uploads folder is ignored by Git
+- YouTube and Maps embeds are rendered client-side (not stored as iframes)
+- Content is stored in HTML in the database, but shown as formatted text or editable blocks
+
+---
+
+## 📌 TODO (Frontend)
+
+- Add post search or filter
+- Add image upload widget
+- Refine mobile responsiveness
+- Polish dashboard styling
+
+---
+
+## 🙌 Credit
+
+Built using React, Vite, TipTap, Bootstrap
+
