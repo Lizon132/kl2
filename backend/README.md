@@ -47,7 +47,7 @@ JWT_SECRET=some_super_secret_value
 
 3. Start dev server:
 ```bash
-npm run dev
+node server.js
 ```
 
 API runs at: `http://localhost:3001`
