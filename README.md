@@ -60,7 +60,13 @@ npm install
 node server.js
 ```
 
-4. Hit `http://localhost:3001/posts?page=1` to test
+4. Run the frontend:
+```bash
+cd frontend
+npm run dev
+```
+
+5. Hit `http://localhost:<port>` to test
 
 ## Future Plans
 
