@@ -119,6 +119,6 @@ npm run dev
 
 ## 🙌 Credits
 
-Built with ❤️ by [Your Name]  
+Built with ❤️ by Lizon 
 (Original Drupal migration project.)
 
