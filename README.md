@@ -5,23 +5,23 @@ This project migrates legacy content from a Drupal 7 website into a modern stack
 - ✅ MySQL backend
 - ✅ Node.js (Express) API server
 - ✅ React + Vite frontend
-- ✅ TipTap editor for WYSIWYG editing
-- ✅ Clean embed handling for YouTube videos and Google Maps
+- ✅ TipTap editor with rich content + source view
+- ✅ Clean embed handling for YouTube and Google Maps
 
 ---
 
 ## 🚀 Features
 
 - Migrate posts from Drupal 7 to a simplified MySQL database
-- Admin login system (with JWT authentication)
-- Posts displayed paginated (10 per page)
-- Rich text editor (TipTap) for editing posts
-- **Embed YouTube videos** via URL
-- **Embed Google Maps** using the "Embed Map" links
-- Human-readable Source View available during editing
-- Modern Bootstrap 5 styling
-- Safe database queries to protect against injection attacks
-- `.env` used to protect database credentials (not hard-coded)
+- Admin login system with JWT authentication
+- Paginated post listing (10 per page)
+- WYSIWYG editor with TipTap + raw HTML editing
+- ✨ Insert [preview-break] marker for post previews
+- 📺 Embed YouTube by pasting URL or using iframe in source view
+- 🗺 Embed Google Maps using the embed URL (auto-wrapped in iframe)
+- Dashboard page with post stats and quick links
+- Modern Bootstrap 5 UI styling
+- Secure `.env` configuration (no hardcoded credentials)
 
 ---
 
@@ -29,18 +29,18 @@ This project migrates legacy content from a Drupal 7 website into a modern stack
 
 ```
 kl2/
-├── backend/        # Node.js + Express API (Auth, Posts API)
-│   ├── routes/     # API route files (posts.js, auth.js)
-│   └── db.js       # Database connection
-│   └── .env        # Environment secrets (MySQL credentials)
-├── frontend/       # React frontend (Vite scaffold)
+├── backend/            # Express API server
+│   ├── routes/         # auth.js, posts.js
+│   ├── scripts/        # (ignored by Git) custom migration tools
+│   └── .env            # MySQL credentials, JWT secret
+├── frontend/           # React frontend (Vite based)
 │   ├── src/
-│   │   ├── pages/      # Pages like PostsPage, EditorPage, LoginPage
+│   │   ├── pages/      # PostsPage, FullPostPage, EditorPage, LoginPage, DashboardPage
 │   │   ├── components/ # Navbar, etc.
 │   └── public/uploads/ # Uploaded images (ignored by Git)
-├── db/             # Database .sql migration files
-├── README.md       # Project documentation
-└── package.json    # Project dependencies
+├── db/                 # Database .sql migration files
+├── README.md           # Root documentation
+└── package.json        # Project metadata
 ```
 
 ---
@@ -48,77 +48,80 @@ kl2/
 ## 📦 Setup Instructions
 
 1. **Clone the repo**
-
 ```bash
 git clone https://github.com/yourusername/kl2.git
 cd kl2
 ```
 
 2. **Install backend dependencies**
-
 ```bash
 cd backend
 npm install
 ```
 
 3. **Install frontend dependencies**
-
 ```bash
 cd ../frontend
 npm install
 ```
 
-4. **Setup your `.env` file in `/backend`**
-
+4. **Setup your backend `.env`**
 ```env
 DB_HOST=localhost
 DB_USER=your_mysql_user
-DB_PASSWORD=your_mysql_password
+DB_PASSWORD=your_password
 DB_NAME=kl
 JWT_SECRET=your_secret_key_here
 ```
 
 5. **Run servers**
-
-_Backend:_
-
 ```bash
+# Backend
 cd backend
 node server.js
-```
 
-_Frontend:_
-
-```bash
+# Frontend (Vite)
 cd ../frontend
 npm run dev
 ```
 
 ---
 
-## 🛡 Important Notes
+## ✨ Editor Details
 
-- **Uploads Folder**: `/frontend/public/uploads/` is ignored by Git.
-- **Scripts Folder**: `/backend/scripts/` is ignored by Git (migration utilities).
-- **Embedding YouTube and Google Maps**:  
-  - YouTube: Paste the normal video URL (TipTap auto-embeds)
-  - Google Maps: **Only use "Embed Map" link** from Google (URL must include `maps/embed?pb=...`)
-- **Login**: After logging in, users can edit posts.
+- TipTap supports inline image, link, and YouTube embedding
+- Source view (`<textarea>`) lets you fully edit raw HTML
+- `[preview-break]` tag defines cutoff point for homepage preview
+- All raw `https://www.google.com/maps/embed?...` URLs are auto-wrapped into `<iframe>`
 
 ---
 
-## 🧹 Future Improvements
+## 🛡 Security
 
-- Fine-grained user permission system (author/editor/admin)
-- Image upload management
-- Bulk edit or delete posts
-- Frontend enhancements (categories, search, etc.)
-- Fully public GitHub-friendly release module for easy Drupal → React migrations
+- Uses parameterized queries to prevent SQL injection
+- JWT stored in `localStorage`, never in cookies
+- Protected routes via token
+
+---
+
+## 🧹 Git Exclusions
+
+- `frontend/public/uploads/` → Ignored (media uploads)
+- `backend/scripts/` → Ignored (temporary utilities)
+
+---
+
+## 🛠 Roadmap Ideas
+
+- Granular user permissions (admin/editor)
+- Drag-and-drop image uploads
+- Full user dashboard
+- Live Markdown preview mode (optional)
 
 ---
 
 ## 🙌 Credits
 
-Built with ❤️ by [Your Name]  
-(Original Drupal migration project.)
+Built with ❤️ by Lizon
+This tool helps convert Drupal 7 sites to a secure, modern, React-based blog platform.
 

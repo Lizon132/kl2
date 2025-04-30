@@ -8,21 +8,23 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     const res = await fetch('http://localhost:3001/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
-
+  
     if (res.ok) {
       const data = await res.json();
       localStorage.setItem('token', data.token);
-      navigate('/');  // redirect to home page
+      localStorage.setItem('username', data.username); 
+      alert('Login successful!');
+      navigate('/dashboard');
     } else {
       alert('Login failed');
     }
-  };
+  };  
 
   return (
     <form onSubmit={handleLogin}>

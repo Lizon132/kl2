@@ -6,12 +6,17 @@ import StarterKit from '@tiptap/starter-kit';
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Youtube from '@tiptap/extension-youtube';
+import { useSearchParams } from 'react-router-dom';
+
+
 
 export default function EditorPage() {
   const [posts, setPosts] = useState([]);
   const [currentPost, setCurrentPost] = useState(null);
   const [showCode, setShowCode] = useState(false);
   const [rawHtml, setRawHtml] = useState('');
+  const [searchParams] = useSearchParams();
+  const autoLoadId = searchParams.get('id');
 
   const editor = useEditor({
   extensions: [
@@ -38,17 +43,30 @@ export default function EditorPage() {
 });
 
 useEffect(() => {
-    fetch('/posts/all')
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          setPosts(data);
-        } else {
-          console.error('Expected array but got:', data);
-        }
-      })
-      .catch(err => console.error('Error loading posts:', err));
-  }, []);
+  fetch('/posts/all')
+    .then(res => res.json())
+    .then(data => {
+      if (Array.isArray(data)) {
+        setPosts(data);
+      } else {
+        console.error('Expected array but got:', data);
+      }
+    })
+    .catch(err => console.error('Error loading posts:', err));
+}, []);
+
+useEffect(() => {
+  if (!autoLoadId || !editor) return;
+
+  fetch(`/posts/${autoLoadId}`)
+    .then(res => res.json())
+    .then(data => {
+      setCurrentPost(data);
+      editor.commands.setContent(data.body || '');
+    })
+    .catch(err => console.error('Error loading post by ID:', err));
+}, [autoLoadId, editor]);
+
 
   const loadPost = async (post) => {
     const res = await fetch(`/posts/${post.id}`);
@@ -80,64 +98,81 @@ useEffect(() => {
   }
 
   return (
-    <div className="d-flex">
-      <div className="p-3 border-end" style={{ width: '300px', height: '100vh', overflowY: 'auto' }}>
-        <h4>Posts</h4>
-        <ul className="list-group">
-            {Array.isArray(posts) ? (
-                posts.map(post => (
-                  <li key={post.id} className="list-group-item list-group-item-action" onClick={() => loadPost(post)}>
-                    {post.title || `Post #${post.id}`}
+    <div className="container-fluid">
+      <div className="row">
+        {/* Sidebar */}
+        <div className="col-md-3 border-end vh-100 overflow-auto p-3">
+          <h5 className="mb-3">Posts</h5>
+          <ul className="list-group">
+            {Array.isArray(posts) && posts.length > 0 ? (
+              posts.map(post => (
+                <li
+                  key={post.id}
+                  className="list-group-item list-group-item-action"
+                  onClick={() => loadPost(post)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {post.title || `Post #${post.id}`}
                 </li>
-                ))
+              ))
             ) : (
-                <p>Loading posts...</p>
+              <p className="text-muted">No posts found.</p>
             )}
-        </ul>
-      </div>
+          </ul>
+        </div>
 
-      <div className="p-4 flex-fill">
-        {currentPost ? (
-          <>
-            <h4>Editing: {currentPost.title || `Post #${currentPost.id}`}</h4>
-            <button className="btn btn-secondary btn-sm me-2" onClick={() => {
-                if (showCode) {
-                    // If we're switching FROM source TO editor, update the editor content
+        {/* Editor Area */}
+        <div className="col-md-9 p-4">
+          {currentPost ? (
+            <>
+              <div className="mb-3">
+                <h4>{currentPost.title || `Post #${currentPost.id}`}</h4>
+                <div className="btn-group mb-3">
+                <button
+                className="btn btn-secondary btn-sm"
+                onClick={() => {
+                  if (!showCode && editor) {
+                    setRawHtml(editor.getHTML().replace(/></g, '>\n<')); // pretty format when entering source
+                  } else if (showCode && editor && rawHtml) {
                     editor.commands.setContent(rawHtml);
-                }
-                setShowCode(!showCode);
-                }}>
-              {showCode ? 'Switch to Editor' : 'Show Source'}
-            </button>
-            <button className="btn btn-primary btn-sm" onClick={savePost}>Save</button>
+                  }
+                  setShowCode(!showCode);
+                }}
+              >
+                {showCode ? 'Switch to Editor' : 'Show Source'}
+              </button>
+                  <button
+                    className="btn btn-outline-secondary btn-sm"
+                    onClick={() => editor.chain().focus().insertContent('[preview-break]').run()}
+                  >
+                    Insert Preview Break
+                  </button>
+                  <button className="btn btn-primary btn-sm" onClick={savePost}>Save</button>
+                </div>
+                <div className="mb-2 text-muted small">
+                  Insert <code>[preview-break]</code> to mark where the preview ends.
+                </div>
+              </div>
 
-            <div className="mt-3 border p-2 bg-light" style={{ minHeight: '400px' }}>
-            {showCode ? (
-                <textarea
-                    value={rawHtml.replace(/></g, '>\n<')}
-                    onChange={(e) => setRawHtml(e.target.value)}
-                    style={{
-                        width: '100%',
-                        minHeight: '400px',
-                        fontFamily: 'monospace',
-                        whiteSpace: 'pre-wrap',
-                        resize: 'vertical',
-                        border: '1px solid #ced4da',
-                        borderRadius: '0.25rem',
-                        padding: '0.5rem',
-                        display: 'block',
-                        boxSizing: 'border-box',
-                    }}
-              />
-                ) : (
-                <EditorContent editor={editor} />
-            )}
-
-            </div>
-          </>
-        ) : (
-          <p>Select a post from the list to begin editing.</p>
-        )}
+              <div className="card shadow-sm">
+                <div className="card-body bg-light">
+                  {showCode ? (
+                    <textarea
+                    className="form-control"
+                    style={{ minHeight: '400px', fontFamily: 'monospace' }}
+                    value={rawHtml}
+                    onChange={e => setRawHtml(e.target.value)}
+                  />
+                  ) : (
+                    <EditorContent editor={editor} />
+                  )}
+                </div>
+              </div>
+            </>
+          ) : (
+            <p className="text-muted">Select a post to begin editing.</p>
+          )}
+        </div>
       </div>
     </div>
   );
