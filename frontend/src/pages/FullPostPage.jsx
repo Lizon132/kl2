@@ -25,7 +25,7 @@ export default function FullPostPage() {
   
 
   useEffect(() => {
-    fetch(`/posts/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/posts/${id}`)
       .then(res => res.json())
       .then(data => setPost(data));
   }, [id]);

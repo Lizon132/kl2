@@ -37,7 +37,7 @@ export default function PostsPage() {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    fetch(`http://localhost:3001/posts?page=${page}`)
+    fetch(`${import.meta.env.VITE_API_URL}/posts?page=${page}`)
       .then(res => res.json())
       .then(data => setPosts(data));
   }, [page]);

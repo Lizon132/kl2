@@ -5,7 +5,7 @@ export default function DashboardPage() {
   const [postCount, setPostCount] = useState(0);
 
   useEffect(() => {
-    fetch('/posts/all')
+    fetch('${import.meta.env.VITE_API_URL}/posts/all')
       .then(res => res.json())
       .then(data => {
         setPostCount(data.length);

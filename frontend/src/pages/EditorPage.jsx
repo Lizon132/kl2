@@ -43,7 +43,7 @@ export default function EditorPage() {
 });
 
 useEffect(() => {
-  fetch('/posts/all')
+  fetch('${import.meta.env.VITE_API_URL}/posts/all')
     .then(res => res.json())
     .then(data => {
       if (Array.isArray(data)) {
@@ -58,7 +58,7 @@ useEffect(() => {
 useEffect(() => {
   if (!autoLoadId || !editor) return;
 
-  fetch(`/posts/${autoLoadId}`)
+  fetch(`${import.meta.env.VITE_API_URL}/posts/${autoLoadId}`)
     .then(res => res.json())
     .then(data => {
       setCurrentPost(data);
@@ -69,7 +69,7 @@ useEffect(() => {
 
 
   const loadPost = async (post) => {
-    const res = await fetch(`/posts/${post.id}`);
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/posts/${post.id}`);
     const data = await res.json();
     setCurrentPost(data);
     editor.commands.setContent(data.body || '');
@@ -84,7 +84,7 @@ useEffect(() => {
       editor.commands.setContent(rawHtml);
     }
   
-    await fetch(`/posts/${currentPost.id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/posts/${currentPost.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ body: editor.getHTML() }),
