@@ -1,4 +1,6 @@
 import express from 'express';
+import { authenticateToken } from '../middleware/authMiddleware.js';
+
 const router = express.Router();
 
 // GET paginated posts
@@ -34,8 +36,8 @@ router.get('/:id', async (req, res) => {
   res.json(rows[0]);
 });
 
-// PUT /posts/:id - update a specific post
-router.put('/:id', async (req, res) => {
+// PUT /posts/:id - update a specific post (protected)
+router.put('/:id', authenticateToken, async (req, res) => {
   const { body } = req.body;
   await req.db.query('UPDATE posts SET body = ? WHERE id = ?', [body, req.params.id]);
   res.json({ success: true });

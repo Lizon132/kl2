@@ -43,7 +43,7 @@ export default function EditorPage() {
 });
 
 useEffect(() => {
-  fetch('${import.meta.env.VITE_API_URL}/posts/all')
+  fetch(`${import.meta.env.VITE_API_URL}/posts/all`)
     .then(res => res.json())
     .then(data => {
       if (Array.isArray(data)) {
